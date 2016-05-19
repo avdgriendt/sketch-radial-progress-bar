@@ -8,5 +8,7 @@ You can:
 * Show a background or not
 * Round the ends of the line or not
 
+![Example](Example.png)
+
 #Installation
 Download the zip and double click the .sketchplugin file. This will install the plugin automatically
