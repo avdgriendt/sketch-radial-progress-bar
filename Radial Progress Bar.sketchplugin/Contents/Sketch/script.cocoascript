@@ -17,7 +17,7 @@ if ( selectedLayers.count() > 0 ) {
         parentObject = layer;
         center = NSMakePoint(firstLayer.frame().x() + firstLayer.frame().width() / 2, firstLayer.frame().y() + firstLayer.frame().height() / 2);
     }
-} 
+}
 
 
 //Set the initial values from the User Defaults if they exist
@@ -51,7 +51,7 @@ if ([userDefaults objectForKey:@"showBackground"]) {
 //Ask for the user input
 var userInput = COSAlertWindow.new();
 
-userInput.setMessageText("Create progress circle");
+userInput.setMessageText("Create radial progress bar");
 
 userInput.addTextLabelWithValue("Radius");
 userInput.addTextFieldWithValue(initialRadius);
@@ -132,7 +132,7 @@ if (responseCode == 1000) {
                                      radius:(thickness / 2)
                                  startAngle:(90)
                                    endAngle:(270)];
-                      
+
       path.closePath();
 
     } else {
