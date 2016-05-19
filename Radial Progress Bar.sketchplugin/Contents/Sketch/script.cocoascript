@@ -1,0 +1,176 @@
+var onRun = function(context) {
+  var doc = context.document;
+var parentObject = doc.currentPage();
+var center = NSMakePoint(0,0);
+
+var selectedLayers = context.selection;
+var selectedCount  = selectedLayers.count();
+var firstLayer     = selectedLayers.firstObject();
+
+//Check if there is a selected layer and determine parent object and center
+if ( selectedLayers.count() > 0 ) {
+    if ([firstLayer isKindOfClass:[MSArtboardGroup class]]) {
+        parentObject = firstLayer;
+        center = NSMakePoint(firstLayer.frame().width() / 2, firstLayer.frame().height() / 2);
+    } else {
+        var layer = firstLayer.parentGroup();
+        parentObject = layer;
+        center = NSMakePoint(firstLayer.frame().x() + firstLayer.frame().width() / 2, firstLayer.frame().y() + firstLayer.frame().height() / 2);
+    }
+} 
+
+
+//Set the initial values from the User Defaults if they exist
+var userDefaults = [NSUserDefaults standardUserDefaults];
+
+var initialRadius = 50;
+if ([userDefaults objectForKey:@"initialRadius"]) {
+    initialRadius = [userDefaults objectForKey:@"initialRadius"];
+}
+
+var initialThickness = 10;
+if ([userDefaults objectForKey:@"initialThickness"]) {
+    initialThickness = [userDefaults objectForKey:@"initialThickness"];
+}
+
+var initialProgress = 75;
+if ([userDefaults objectForKey:@"initialProgress"]) {
+    initialProgress = [userDefaults objectForKey:@"initialProgress"];
+}
+
+var shouldRound = false;
+if ([userDefaults objectForKey:@"shouldRound"]) {
+    shouldRound = [userDefaults objectForKey:@"shouldRound"];
+}
+
+var showBackground = true;
+if ([userDefaults objectForKey:@"showBackground"]) {
+    showBackground = [userDefaults objectForKey:@"showBackground"];
+}
+
+//Ask for the user input
+var userInput = COSAlertWindow.new();
+
+userInput.setMessageText("Create progress circle");
+
+userInput.addTextLabelWithValue("Radius");
+userInput.addTextFieldWithValue(initialRadius);
+
+userInput.addTextLabelWithValue("Thickness");
+userInput.addTextFieldWithValue(initialThickness);
+
+userInput.addTextLabelWithValue("Progress (%)");
+userInput.addTextFieldWithValue(initialProgress);
+
+var roundedCheckbox = NSButton.alloc().initWithFrame( NSMakeRect( 0, 0, 300, 18 ) );
+roundedCheckbox.setButtonType( NSSwitchButton );
+roundedCheckbox.setTitle( 'Rounded Line' );
+roundedCheckbox.setState(shouldRound);
+userInput.addAccessoryView( roundedCheckbox );
+
+var showBackgroundCheckbox = NSButton.alloc().initWithFrame( NSMakeRect( 0, 0, 300, 18 ) );
+showBackgroundCheckbox.setButtonType( NSSwitchButton );
+showBackgroundCheckbox.setTitle( 'Show background' );
+showBackgroundCheckbox.setState(showBackground);
+userInput.addAccessoryView( showBackgroundCheckbox );
+
+userInput.addButtonWithTitle('Create');
+userInput.addButtonWithTitle('Cancel');
+
+var responseCode = userInput.runModal();
+
+//Get the values from the fields
+var radius = userInput.viewAtIndex(1).floatValue();
+var thickness = userInput.viewAtIndex(3).floatValue();
+var shouldRound = userInput.viewAtIndex(6).state();
+var showBackground = userInput.viewAtIndex(7).state();
+var progress = userInput.viewAtIndex(5).floatValue();
+
+if (responseCode == 1000) {
+
+  //Save the input to the user defaults
+  [userDefaults setObject:radius forKey:@"initialRadius"];
+  [userDefaults setObject:thickness forKey:@"initialThickness"];
+  [userDefaults setObject:progress forKey:@"initialProgress"];
+  [userDefaults setObject:showBackground forKey:@"showBackground"];
+  [userDefaults setObject:shouldRound forKey:@"shouldRound"];
+  [userDefaults synchronize];
+
+  if (radius < thickness) {
+	   doc.displayMessage('Invalid input, please try again');
+} else {
+    var group = parentObject.addLayerOfType("group")
+    group.setName("Progress Circle")
+
+    var path = NSBezierPath.bezierPath();
+    if (shouldRound) {
+      var cornerRadius = thickness / 2;
+      var offsetInDegrees = (cornerRadius / (2 * 3.14 * radius)) * 360;
+      var angle = progress / 100 * 360 - 90;
+      var angleWithOffset = angle - offsetInDegrees;
+      [path appendBezierPathWithArcWithCenter:center
+                                     radius:radius
+                                 startAngle:(-90)
+                                   endAngle:angle];
+
+      var x1 = center.x + (radius - (thickness / 2)) * Math.cos(angle * (3.14 / 180));
+      var y1 = center.y + (radius - (thickness / 2)) * Math.sin(angle * (3.14 / 180));
+
+      [path appendBezierPathWithArcWithCenter:NSMakePoint(x1, y1)
+                                 radius:(thickness / 2)
+                             startAngle:(angle)
+                               endAngle:(angle + 180)];
+
+      [path appendBezierPathWithArcWithCenter:center
+                                     radius:(radius - thickness)
+                                 startAngle:(progress / 100 * 360 - 90)
+                                   endAngle:(-90)
+                                  clockwise:true];
+
+
+      [path appendBezierPathWithArcWithCenter:NSMakePoint(center.x, center.y - (radius - (thickness / 2)))
+                                     radius:(thickness / 2)
+                                 startAngle:(90)
+                                   endAngle:(270)];
+                      
+      path.closePath();
+
+    } else {
+        [path appendBezierPathWithArcWithCenter:center
+                                       radius:radius
+                                   startAngle:-90
+                                     endAngle:(progress / 100 * 360 - 90)];
+
+
+        [path appendBezierPathWithArcWithCenter:center
+                                       radius:(radius - thickness)
+                                   startAngle:(progress / 100 * 360 - 90)
+                                     endAngle:-90
+                                    clockwise:true];
+        path.closePath();
+    }
+
+    var shape = MSShapeGroup.shapeWithBezierPath(path);
+    shape.setName("Progress")
+    var fill = shape.style().fills().addNewStylePart();
+    fill.color = MSColor.colorWithSVGString("#333333");
+
+    if (showBackground) {
+
+        var backgroundCirclePath = NSBezierPath.bezierPathWithOvalInRect(NSMakeRect( center.x - radius, center.y - radius, radius * 2, radius * 2 ));
+        backgroundCirclePath.appendBezierPathWithOvalInRect(NSMakeRect( center.x - (radius - thickness), center.y - (radius - thickness), (radius - thickness) * 2 , (radius - thickness) * 2 ));
+        [backgroundCirclePath addClip];
+        var backgroundCircleShape = MSShapeGroup.shapeWithBezierPath(backgroundCirclePath);
+        var backgroundFill = backgroundCircleShape.style().fills().addNewStylePart();
+        backgroundFill.color = MSColor.colorWithSVGString("#F6F6F6");
+        backgroundCircleShape.setName("Background")
+        group.addLayers([backgroundCircleShape]);
+
+    }
+    group.addLayers([shape])
+    [group resizeToFitChildrenWithOption:0];
+  }
+}
+
+
+};

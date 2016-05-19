@@ -1,0 +1,24 @@
+{
+  "author" : "Andreas van der Griendt",
+  "commands" : [
+    {
+      "script" : "script.cocoascript",
+      "name" : "Create",
+      "handlers" : {
+        "run" : "onRun"
+      },
+      "identifier" : "com.bohemiancoding.sketch.radialprogressbar"
+    }
+  ],
+  "menu" : {
+    "items" : [
+      "com.bohemiancoding.sketch.radialprogressbar"
+    ],
+    "title" : "Radial Progress Bar"
+  },
+  "identifier" : "com.example.sketch.0019123d-c953-404e-bfbd-1a64017631bb",
+  "version" : "0.1",
+  "description" : "A Sketch plugin that can generate beatiful radial progress bars",
+  "authorEmail" : "andreas@visuo.nl",
+  "name" : "Radial Progress Bar"
+}
