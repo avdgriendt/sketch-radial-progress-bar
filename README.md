@@ -10,5 +10,10 @@ You can:
 
 ![Example](Example.png)
 
+#Full vector paths
+It creates a clean vector path, so you don't need to worry when you scale or move it that it's going to be messed up.
+![Paths](Paths.png)
+
+
 #Installation
 Download the zip and double click the .sketchplugin file. This will install the plugin automatically
