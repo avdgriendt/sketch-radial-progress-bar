@@ -17,7 +17,7 @@
     "title" : "Radial Progress Bar"
   },
   "identifier" : "com.example.sketch.0019123d-c953-404e-bfbd-1a64017631bb",
-  "version" : "0.1",
+  "version" : "0.2",
   "description" : "A Sketch plugin that can generate beatiful radial progress bars",
   "authorEmail" : "andreas@visuo.nl",
   "name" : "Radial Progress Bar"

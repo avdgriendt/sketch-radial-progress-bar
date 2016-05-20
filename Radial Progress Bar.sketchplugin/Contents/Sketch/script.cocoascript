@@ -1,5 +1,6 @@
 var onRun = function(context) {
-  var doc = context.document;
+
+var doc = context.document;
 var parentObject = doc.currentPage();
 var center = NSMakePoint(0,0);
 
@@ -99,8 +100,9 @@ if (responseCode == 1000) {
   if (radius < thickness) {
 	   doc.displayMessage('Invalid input, please try again');
 } else {
+    // var group = parentObject.addLayers([group]);
     var group = parentObject.addLayerOfType("group")
-    group.setName("Progress Circle")
+   group.setName("Progress Circle")
 
     var path = NSBezierPath.bezierPath();
     if (shouldRound) {
@@ -152,7 +154,7 @@ if (responseCode == 1000) {
 
     var shape = MSShapeGroup.shapeWithBezierPath(path);
     shape.setName("Progress")
-    var fill = shape.style().fills().addNewStylePart();
+    var fill = shape.style().addStylePartOfType(0);
     fill.color = MSColor.colorWithSVGString("#333333");
 
     if (showBackground) {
@@ -161,16 +163,14 @@ if (responseCode == 1000) {
         backgroundCirclePath.appendBezierPathWithOvalInRect(NSMakeRect( center.x - (radius - thickness), center.y - (radius - thickness), (radius - thickness) * 2 , (radius - thickness) * 2 ));
         [backgroundCirclePath addClip];
         var backgroundCircleShape = MSShapeGroup.shapeWithBezierPath(backgroundCirclePath);
-        var backgroundFill = backgroundCircleShape.style().fills().addNewStylePart();
+        var backgroundFill = backgroundCircleShape.style().addStylePartOfType(0);
         backgroundFill.color = MSColor.colorWithSVGString("#F6F6F6");
         backgroundCircleShape.setName("Background")
         group.addLayers([backgroundCircleShape]);
 
     }
-    group.addLayers([shape])
+    group.addLayers([shape]);
     [group resizeToFitChildrenWithOption:0];
   }
 }
-
-
-};
+}
