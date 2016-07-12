@@ -1,5 +1,3 @@
-var onRun = function(context) {
-
 var doc = context.document;
 var parentObject = doc.currentPage();
 var center = NSMakePoint(0,0);
@@ -100,8 +98,8 @@ if (responseCode == 1000) {
   if (radius < thickness) {
 	   doc.displayMessage('Invalid input, please try again');
 } else {
-    // var group = parentObject.addLayers([group]);
-    var group = parentObject.addLayerOfType("group")
+    var group = [MSLayerGroup new]
+    parentObject.addLayers([group])
    group.setName("Progress Circle")
 
     var path = NSBezierPath.bezierPath();
@@ -172,5 +170,4 @@ if (responseCode == 1000) {
     group.addLayers([shape]);
     [group resizeToFitChildrenWithOption:0];
   }
-}
 }
