@@ -1,3 +1,5 @@
+var onRun = function(context) {
+
 var doc = context.document;
 var parentObject = doc.currentPage();
 var center = NSMakePoint(0,0);
@@ -170,4 +172,5 @@ if (responseCode == 1000) {
     group.addLayers([shape]);
     [group resizeToFitChildrenWithOption:0];
   }
+}
 }
