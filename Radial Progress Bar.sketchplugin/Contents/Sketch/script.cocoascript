@@ -155,7 +155,7 @@ if (responseCode == 1000) {
     var shape = MSShapeGroup.shapeWithBezierPath(path);
     shape.setName("Progress")
     var fill = shape.style().addStylePartOfType(0);
-    fill.color = MSColor.colorWithSVGString("#333333");
+    fill.color = MSColor.colorWithRed_green_blue_alpha(0.1,0.1,0.1,1.0);
 
     if (showBackground) {
 
@@ -164,7 +164,7 @@ if (responseCode == 1000) {
         [backgroundCirclePath addClip];
         var backgroundCircleShape = MSShapeGroup.shapeWithBezierPath(backgroundCirclePath);
         var backgroundFill = backgroundCircleShape.style().addStylePartOfType(0);
-        backgroundFill.color = MSColor.colorWithSVGString("#F6F6F6");
+        backgroundFill.color = MSColor.colorWithRed_green_blue_alpha(0.75,0.75,0.75,1.0);
         backgroundCircleShape.setName("Background")
         group.addLayers([backgroundCircleShape]);
 
